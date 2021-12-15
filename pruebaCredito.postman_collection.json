@@ -1,0 +1,135 @@
+{
+	"info": {
+		"_postman_id": "54577bb3-ab3b-4c1c-8aa7-b81a49855ef4",
+		"name": "pruebaCredito",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "https://seapi.sears.com.mx/credito-sears/v1/cards/2349?NoInternet=0021626122",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var refresh_token = pm.environment.get(\"refresh_token\");\r",
+							"\r",
+							"pm.sendRequest(\r",
+							"{\r",
+							"    url: \"https://seapi.sears.com.mx/app/v1/login?refresh_token=\"+refresh_token,\r",
+							"    method: \"GET\",\r",
+							"    header: {\r",
+							"    }\r",
+							"}, function (err, res) {\r",
+							"    pm.expect(res).to.have.property('code', 200);\r",
+							"    var refresh_token = res.json().data.refresh_token;\r",
+							"    var access_token = res.json().data.access_token;\r",
+							"    pm.environment.set('refresh_token', refresh_token);\r",
+							"    pm.environment.set('access_token', \"Bearer \"+access_token);\r",
+							"    pm.sendRequest({\r",
+							"        url: \"https://seapi.sears.com.mx/credito-sears/v1/internet/card/list\",\r",
+							"        method: \"GET\",\r",
+							"        header: {\r",
+							"            \"authorization\": pm.environment.get(\"access_token\"),\r",
+							"        }\r",
+							"    },function(err,res){\r",
+							"        pm.expect(res).to.have.property('code', 200);\r",
+							"        var no_internet = res.json().cards[0].no_internet;\r",
+							"        pm.environment.set('no_internet', no_internet);\r",
+							"    })\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const schema = {\r",
+							"    \"type\": \"array\",\r",
+							"    \"items\": {\r",
+							"        \"type\": \"object\",\r",
+							"        \"properties\": {\r",
+							"            \"name\": {\"type\": \"string\"},\r",
+							"            \"paternal\": {\"type\": \"string\"},\r",
+							"            \"maternal\": {\"type\": \"string\"},\r",
+							"            \"email\": {\"type\": \"string\"},\r",
+							"            \"card_id\": {\"type\": \"string\"},\r",
+							"            \"monthly_payment\": {\"type\": \"number\"},\r",
+							"            \"minimum_to_pay\": {\"type\": \"number\"},\r",
+							"            \"new_balance_cutting\": {\"type\": \"number\"},\r",
+							"            \"payment_not_generate_interest\": {\"type\": \"number\"},\r",
+							"            \"payday_limit\": {\"type\": \"number\"},\r",
+							"            \"credit_imit\": {\"type\": \"number\"},\r",
+							"            \"credit_available\": {\"type\": \"number\"},\r",
+							"            \"status\": {\"type\": \"string\"},\r",
+							"            \"status_app\": {\"type\": \"number\"},\r",
+							"            \"cards\": {\r",
+							"                \"type\": \"array\",\r",
+							"                \"items\": {\r",
+							"                    \"type\": \"object\",\r",
+							"                    \"properties\": {\r",
+							"                        \"card_number\": {\"type\": \"string\"},\r",
+							"                    },\r",
+							"                    \"required\": [\"card_number\"],\r",
+							"                    \"additionalProperties\": false\r",
+							"                }\r",
+							"            },\r",
+							"            \"account_number\": {\"type\": \"string\"},\r",
+							"            \"bill_date\": {\"type\": \"number\"},\r",
+							"            \"codMen\": {\"type\": \"string\"}\r",
+							"        },\r",
+							"        \"required\": [\"name\", \"paternal\", \"maternal\", \"email\", \"card_id\", \"monthly_payment\", \"minimum_to_pay\", \"new_balance_cutting\", \"payment_not_generate_interest\", \"payday_limit\", \"credit_imit\", \"credit_available\", \"status\", \"status_app\", \"cards\", \"account_number\", \"bill_date\", \"codMen\"],\r",
+							"        \"additionalProperties\": false\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Validations in the request, successful case\", function(){\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(3000);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableCookies": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ3LTNYVUxtZnhKY0tpeWU0dzc2YWhQOXg4SWw4ZFBoV0Y1OC1sU21FbkhRIn0.eyJleHAiOjE2Mzk2MDYzNzgsImlhdCI6MTYzOTYwMjc3OCwianRpIjoiMjg1YzFlZGUtZDUzNi00NTBiLTkzZGEtZDBmYjY3NmI5YTgxIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbmNsYXJvLmNvbS9hdXRoL3JlYWxtcy9zZWFycyIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiJjNDU0YWVkYy04NTE5LTQ5ODQtODNhOC1lY2NkOThmY2IxOGIiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzZS11c3J2Yy1iYWNrLW15LWFjY291bnQiLCJzZXNzaW9uX3N0YXRlIjoiMjM2M2FkNGQtN2YwYS00NWI4LWE2YTktNmRkZDM3YjNkZDU5IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwczovL3d3dy5zZWFycy5jb20ubXgiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtc2VhcnMiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiMjM2M2FkNGQtN2YwYS00NWI4LWE2YTktNmRkZDM3YjNkZDU5IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJMdWlzIEVucmlxdWUgRGlleiBCYXJyb3NvIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiZGllemw3MkBnbWFpbC5jb20iLCJnaXZlbl9uYW1lIjoiTHVpcyBFbnJpcXVlIiwiZmFtaWx5X25hbWUiOiJEaWV6IEJhcnJvc28iLCJlbWFpbCI6ImRpZXpsNzJAZ21haWwuY29tIn0.t1X_kKicszSyCcjCxK7GWA-7JLZN_VovBUkLwVC2DncoAiQBqO_U4JG4Ng8qKjkIVdqedA4lAneh1qvIMyOwtUhJKIOa413NZNzZA4zoW0BmqF9_J1s7Hg2XVh6j8bvosGwK3e9NUglXQlBo_mSiZabTPIBUd7__fJFMVcfCOAfAVmYXv9VksbyRgqvUemp-EIZ6AxkQahpsXkssIvXVKsR8s_EEwOAy3bTKU0RNrmAL1JwOog1X69A3RG35Cp3fA90zsI4gpLPgqApKV6sBggtj-SRfhAGqRLcqpbXHC0-BfdXM6l8JnMzZrT477a3lsu_wl_51a47iYrp4tiotLA"
+					}
+				],
+				"url": {
+					"raw": "https://seapi.sears.com.mx/credito-sears/v1/cards/2349?NoInternet={{no_internet}}",
+					"protocol": "https",
+					"host": [
+						"seapi",
+						"sears",
+						"com",
+						"mx"
+					],
+					"path": [
+						"credito-sears",
+						"v1",
+						"cards",
+						"2349"
+					],
+					"query": [
+						{
+							"key": "NoInternet",
+							"value": "{{no_internet}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

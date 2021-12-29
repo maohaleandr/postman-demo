@@ -1,0 +1,139 @@
+{
+	"info": {
+		"_postman_id": "bea0d206-87c8-469f-adb6-7670fd8fc362",
+		"name": "creditoTelmex",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "https://csapi.claroshop.com/caja/api/telmex-mensualidades",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.sendRequest({\r",
+							"    url: \"https://csapi.claroshop.com/app/ApiRest/Login\",\r",
+							"    method: \"POST\",\r",
+							"    header: [],\r",
+							"    body: {\r",
+							"        \"mode\": \"raw\",\r",
+							"        \"raw\": {\r",
+							"            \"usuario\": pm.environment.get(\"usuario\"),\r",
+							"            \"contrasena\": pm.environment.get(\"contrasena\"),\r",
+							"        },\r",
+							"        \"options\": {\r",
+							"            \"raw\": {\r",
+							"                \"language\": \"json\"\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"},function(err,res){\r",
+							"    pm.expect(res).to.have.property('code', 200);\r",
+							"    var idCarrito = res.json().idCarrito;\r",
+							"    pm.environment.set('idCarrito', idCarrito);\r",
+							"    pm.sendRequest({\r",
+							"        url: \"https://csapi.claroshop.com/caja/api/inicio-caja/\"+pm.environment.get(\"idCarrito\"),\r",
+							"        method: \"GET\",\r",
+							"        header: [],\r",
+							"        body: {}\r",
+							"    },function(err,res2){\r",
+							"        pm.expect(res2).to.have.property('code', 200);\r",
+							"        var csckey = res2.headers.find(csckey => csckey.key === \"CSC-KEY\");\r",
+							"        pm.environment.set('csckey', csckey.value);\r",
+							"        pm.sendRequest({\r",
+							"            url: \"https://csapi.claroshop.com/caja/api/telmex\",\r",
+							"            method: \"POST\",\r",
+							"            header: {\r",
+							"                \"csc-key\": pm.environment.get(\"csckey\")\r",
+							"            },\r",
+							"            body: {\r",
+							"                \"mode\": \"raw\",\r",
+							"                \"raw\": {\r",
+							"                    \"telefono\": \"5526461829\",\r",
+							"                    \"contrasena\": \"Homele55\",\r",
+							"                    \"action\": 1\r",
+							"                },\r",
+							"                \"options\": {\r",
+							"                    \"raw\": {\r",
+							"                        \"language\": \"json\"\r",
+							"                    }\r",
+							"                }\r",
+							"            }\r",
+							"        },function(err, res3){\r",
+							"            if(res3.json().status == true){\r",
+							"                pm.sendRequest({\r",
+							"                    url: \"https://csapi.claroshop.com/caja/api/telmex-mensualidades\",\r",
+							"                    method: \"GET\",\r",
+							"                    header: {\r",
+							"                       \"csc-key\" : pm.environment.get(\"csckey\")\r",
+							"                    }\r",
+							"                },function(err, res4){\r",
+							"                    console.log(res4.json())\r",
+							"                })\r",
+							"            }\r",
+							"        })\r",
+							"    })\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"status\": {\"type\": \"boolean\"},\r",
+							"    },\r",
+							"    \"required\":[\"status\"],\r",
+							"    \"additionalProperties\": false\r",
+							"};\r",
+							"\r",
+							"pm.test(\"Validations in the request, successful case\", function(){\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(3000);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "content-type",
+						"value": "application/json"
+					},
+					{
+						"key": "csc-key",
+						"value": "{{csckey}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\":13}"
+				},
+				"url": {
+					"raw": "https://csapi.claroshop.com/caja/api/telmex-mensualidades",
+					"protocol": "https",
+					"host": [
+						"csapi",
+						"claroshop",
+						"com"
+					],
+					"path": [
+						"caja",
+						"api",
+						"telmex-mensualidades"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

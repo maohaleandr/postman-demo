@@ -1,0 +1,298 @@
+{
+	"info": {
+		"_postman_id": "5f99d2f2-40ab-43d3-8402-8747b49fa451",
+		"name": "Telmex",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "{{hostProduccion}}/app/v1/telmex/login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"metadata\":{\r",
+							"            \"type\": \"object\",\r",
+							"            \"properties\": {\r",
+							"                \"is_error\": {\"type\": \"boolean\"},\r",
+							"                \"http_status\": {\"type\": \"number\"},\r",
+							"                \"http_status_phrase\": {\"type\": \"string\"},\r",
+							"                \"time\": {\"type\": \"number\"},\r",
+							"                \"message\": {\"type\": \"string\"}\r",
+							"            },\r",
+							"            \"required\": [\"is_error\", \"http_status\", \"http_status_phrase\", \"time\", \"message\"],\r",
+							"            \"additionalProperties\": false\r",
+							"        },\r",
+							"        \"data\": {\r",
+							"            \"type\": \"object\",\r",
+							"            \"properties\": {\r",
+							"                \"is_login\": {\"type\": \"boolean\"},\r",
+							"                \"message\": {\"type\": \"string\"},\r",
+							"            },\r",
+							"            \"required\": [\"is_login\", \"message\"],\r",
+							"            \"additionalProperties\": false\r",
+							"        },\r",
+							"        \"pagination\": {\"type\": \"array\"},\r",
+							"    },\r",
+							"    \"required\": [\"metadata\", \"data\", \"pagination\"],\r",
+							"    \"additionalProperties\": false\r",
+							"};\r",
+							"\r",
+							"pm.test(\"Validations in the request, successful case\", function(){\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(5000);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableCookies": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "content-type",
+						"value": "application/json; charset=UTF-8"
+					},
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"phone\":\"{{phone}}\",\"password\":\"{{phonePassword}}\"}"
+				},
+				"url": {
+					"raw": "{{hostProduccion}}/app/v1/telmex/login",
+					"host": [
+						"{{hostProduccion}}"
+					],
+					"path": [
+						"app",
+						"v1",
+						"telmex",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{hostProduccion}}/app/v1/telmex/questions?phone={{phone}}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"metadata\":{\r",
+							"            \"type\": \"object\",\r",
+							"            \"properties\": {\r",
+							"                \"is_error\": {\"type\": \"boolean\"},\r",
+							"                \"http_status\": {\"type\": \"number\"},\r",
+							"                \"http_status_phrase\": {\"type\": \"string\"},\r",
+							"                \"time\": {\"type\": \"number\"},\r",
+							"                \"message\": {\"type\": \"string\"}\r",
+							"            },\r",
+							"            \"required\": [\"is_error\", \"http_status\", \"http_status_phrase\", \"time\", \"message\"],\r",
+							"            \"additionalProperties\": false\r",
+							"        },\r",
+							"        \"data\": {\r",
+							"            \"type\": \"object\",\r",
+							"            \"properties\": {\r",
+							"                \"phone\": {\"type\": \"string\"},\r",
+							"                \"validated\": {\"type\": \"boolean\"}, \r",
+							"                \"is_blacklist\": {\"type\": \"boolean\"},\r",
+							"                \"is_blocked_by_wrong_attempts\": {\"type\": \"boolean\"},\r",
+							"                \"credit\": {\r",
+							"                    \"type\": \"object\",\r",
+							"                    \"properties\": {\r",
+							"                        \"balance\": {\"type\": \"number\"},\r",
+							"                        \"limit\": {\"type\": \"number\"},\r",
+							"                        \"spent\": {\"type\": \"number\"}\r",
+							"                    },\r",
+							"                    \"required\": [\"balance\", \"limit\", \"spent\"],\r",
+							"                    \"additionalProperties\": false\r",
+							"                },\r",
+							"                \"telmex_months\": {\r",
+							"                    \"type\": \"array\",\r",
+							"                    \"items\": {\r",
+							"                        \"type\": \"object\",\r",
+							"                        \"properties\": {\r",
+							"                            \"month\": {\"type\": \"number\"},\r",
+							"                            \"price\": {\"type\": \"number\"}\r",
+							"                        },\r",
+							"                        \"required\": [\"month\", \"price\"],\r",
+							"                        \"additionalProperties\": false\r",
+							"                    }\r",
+							"                },\r",
+							"                \"attempts\": {\"type\": \"number\"}\r",
+							"            },\r",
+							"            \"required\": [\"phone\", \"validated\", \"is_blacklist\", \"is_blocked_by_wrong_attempts\", \"credit\", \"telmex_months\", \"attempts\"],\r",
+							"            \"additionalProperties\": false\r",
+							"        },\r",
+							"        \"pagination\": {\"type\": \"array\"},\r",
+							"    },\r",
+							"    \"required\": [\"metadata\", \"data\", \"pagination\"],\r",
+							"    \"additionalProperties\": false\r",
+							"};\r",
+							"\r",
+							"pm.test(\"Validations in the request, successful case\", function(){\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(12000);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableCookies": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hostProduccion}}/app/v1/telmex/questions?phone={{phone}}",
+					"host": [
+						"{{hostProduccion}}"
+					],
+					"path": [
+						"app",
+						"v1",
+						"telmex",
+						"questions"
+					],
+					"query": [
+						{
+							"key": "phone",
+							"value": "{{phone}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{hostProduccion}}/app/v1/telmex/white-list",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"metadata\":{\r",
+							"            \"type\": \"object\",\r",
+							"            \"properties\": {\r",
+							"                \"is_error\": {\"type\": \"boolean\"},\r",
+							"                \"http_status\": {\"type\": \"number\"},\r",
+							"                \"http_status_phrase\": {\"type\": \"string\"},\r",
+							"                \"time\": {\"type\": \"number\"},\r",
+							"                \"message\": {\"type\": \"string\"}\r",
+							"            },\r",
+							"            \"required\": [\"is_error\", \"http_status\", \"http_status_phrase\", \"time\", \"message\"],\r",
+							"            \"additionalProperties\": false\r",
+							"        },\r",
+							"        \"data\": {\r",
+							"            \"type\": \"array\",\r",
+							"            \"items\":{\r",
+							"                \"type\": \"object\",\r",
+							"                \"properties\": {\r",
+							"                    \"phone\": {\"type\": \"string\"},\r",
+							"                    \"validated\": {\"type\": \"boolean\"}, \r",
+							"                    \"is_blacklist\": {\"type\": \"boolean\"},\r",
+							"                    \"is_blocked_by_wrong_attempts\": {\"type\": \"boolean\"},\r",
+							"                    \"credit\": {\r",
+							"                        \"type\": \"object\",\r",
+							"                        \"properties\": {\r",
+							"                            \"balance\": {\"type\": \"number\"},\r",
+							"                            \"limit\": {\"type\": \"number\"},\r",
+							"                            \"spent\": {\"type\": \"number\"}\r",
+							"                        },\r",
+							"                        \"required\": [\"balance\", \"limit\", \"spent\"],\r",
+							"                        \"additionalProperties\": false\r",
+							"                    },\r",
+							"                    \"telmex_months\": {\r",
+							"                        \"type\": \"array\",\r",
+							"                        \"items\": {\r",
+							"                            \"type\": \"object\",\r",
+							"                            \"properties\": {\r",
+							"                                \"month\": {\"type\": \"number\"},\r",
+							"                                \"price\": {\"type\": \"number\"}\r",
+							"                            },\r",
+							"                            \"required\": [\"month\", \"price\"],\r",
+							"                            \"additionalProperties\": false\r",
+							"                        }\r",
+							"                    },\r",
+							"                    \"attempts\": {\"type\": \"number\"}\r",
+							"                },\r",
+							"                \"required\": [\"phone\", \"validated\", \"is_blacklist\", \"is_blocked_by_wrong_attempts\", \"credit\", \"telmex_months\", \"attempts\"],\r",
+							"                \"additionalProperties\": false\r",
+							"            }\r",
+							"        },\r",
+							"        \"pagination\": {\"type\": \"array\"},\r",
+							"    },\r",
+							"    \"required\": [\"metadata\", \"data\", \"pagination\"],\r",
+							"    \"additionalProperties\": false\r",
+							"};\r",
+							"\r",
+							"pm.test(\"Validations in the request, successful case\", function(){\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(7000);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableCookies": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "content-type",
+						"value": "application/json; charset=UTF-8"
+					},
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\"phone\":\"{{phone}}\"}]"
+				},
+				"url": {
+					"raw": "{{hostProduccion}}/app/v1/telmex/white-list",
+					"host": [
+						"{{hostProduccion}}"
+					],
+					"path": [
+						"app",
+						"v1",
+						"telmex",
+						"white-list"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
